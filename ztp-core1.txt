@@ -1,0 +1,59 @@
+from cli import configure, execute
+	
+USER="mouhsine"
+PASSWORD="axians"
+ENABLE="axians"
+	
+def config_basique():                       
+	configure(['hostname Core1-B1-um6p-2020-07-B7'])
+	configure(['username{} privilege 15 password {}'
+	.format(USER,PASSWORD)])
+	configure(['enable secret {}'
+	.format(ENABLE)])
+	configure(['line vty 0 4', 'transport input ssh',
+	 'login local'])
+	configure(['ip domain-name um6p.com'])
+	configure(['crypto key generate rsa', 'service password-encry'])
+	execute('wr')
+
+def config_routing():
+	cli.configurep(['router eigrp 1',
+	'network 10.10.10.0 0.0.0.255',
+	'network 172.16.1.0',
+	'network 172.16.2.0')]
+
+
+def port_channel():
+	cli.configurep(['interface Port-channel1',
+	'ip add 10.10.10.2 255.255.255.252')]
+
+def config_switchport():
+	cli.configurep(['interface Ge0/0',
+	'no switchport',
+	'duplex full,
+	'channel-group 1 mode on')]
+	cli.configurep(['interface Ge0/1',
+	'no switchport',
+	'duplex full',
+	'no ip add',
+	'channel-group 1 mode on')]
+	cli.configurep(['interface Ge0/2',
+	'no switchport',
+	'duplex full',
+	'ip add 172.16.1.1 255.255.255.0',
+	'duplex full')]
+	cli.configurep(['interface Ge0/3',
+	'no switchport',
+	'duplex full',
+	'ip add 172.16.2.1 255.255.255.0',
+	'duplex full')]
+	cli.configurep(['interface Ge1/0',
+	'no switchport',
+	'duplex full',
+	'ip add 172.16.3.1 255.255.255.0',
+	'duplex full')]
+
+config_basqiue()
+config_switchport()
+port_channel()
+config_routing()
